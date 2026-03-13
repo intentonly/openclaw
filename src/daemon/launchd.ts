@@ -477,10 +477,11 @@ export async function restartLaunchAgent({
     return { outcome: "scheduled" };
   }
 
-  const start = await execLaunchctl(["kickstart", "-k", serviceTarget]);
+  // Use -s (soft signal) instead of -k (kill) to trigger in-process restart via SIGUSR1
+  const start = await execLaunchctl(["kickstart", "-s", serviceTarget]);
   if (start.code === 0) {
     try {
-      stdout.write(`${formatLine("Restarted LaunchAgent", serviceTarget)}\n`);
+      stdout.write(`${formatLine("Restarted LaunchAgent (SIGUSR1)", serviceTarget)}\n`);
     } catch (err: unknown) {
       if ((err as NodeJS.ErrnoException)?.code !== "EPIPE") {
         throw err;
