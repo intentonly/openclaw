@@ -515,6 +515,11 @@ function resolveChannelId(channel: string | undefined): ChannelId | null {
 }
 
 function resolveEdgeOutputFormat(config: ResolvedTtsConfig): string {
+  // For Telegram (voice-bubble channels), use OGG/Opus like OpenAI/ElevenLabs
+  const channel = config.channel?.toLowerCase();
+  if (channel === "telegram" || VOICE_BUBBLE_CHANNELS.has(channel)) {
+    return TELEGRAM_OUTPUT.openai; // "opus"
+  }
   return config.edge.outputFormat;
 }
 
